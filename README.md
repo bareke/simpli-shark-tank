@@ -15,15 +15,18 @@ AI tool for answering questions and queries about our data
 _Make sure you provide the correct credentials before running the project_
 
 ```python
-# DATABASE
-DATABASE_TYPE=postgresql
-SERVICE_DATABASE_URL_TENANT=postgresql://{{user}}:{{password}}@{{host}}:{{port}}/{{database}}
+# APP
+APP_PORT=8084
 
-# STORE
-STORE_HOST=redis-dev
-STORE_PORT=6379
-STORE_USERNAME=default
-STORE_PASSWORD=abc123
+# IA
+IA_APIKEY='sk-abc'
+
+# DATABASE
+DB_HOST='127.0.0.1'
+DB_NAME='database name'
+DB_USER='user'
+DB_PASSWORD='password123'
+DB_PORT='1010'
 ```
 
 ## Run project
