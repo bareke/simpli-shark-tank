@@ -11,7 +11,7 @@ class MyVanna(ChromaDB_VectorStore, OpenAI_Chat):
         ChromaDB_VectorStore.__init__(self, config=config)
         OpenAI_Chat.__init__(self, config=config)
 
-vn = MyVanna(config={'api_key': settings.get('ia_apikey'), 'model': 'gpt-3.5-turbo'})
+vn = MyVanna(config={'api_key': settings.get('ia_apikey'), 'model': 'gpt-4o-mini'})
 
 vn.connect_to_postgres(
     host=settings.get('db_host'),
@@ -30,11 +30,12 @@ app = VannaFlaskApp(
     vn,
     logo="https://simpliroute.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogoSimpliRoute.ae5a87d3.png&w=256&q=100",
     sql=False,
-    title="Bienvenido al Simpli del Futuro",
-    subtitle="Tu herramienta de IA para responder dudas y consultas de nuestros datos",
+    title="Bienvenido al Simpli del Futuro - DataMO",
+    subtitle="smart queries made Simpli",
     allow_llm_to_see_data=True,
     csv_download=True,
     chart=False,
-    redraw_chart=False
+    redraw_chart=False,
+    table=False,
 )
 app.run()

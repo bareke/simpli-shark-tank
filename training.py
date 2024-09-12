@@ -152,3 +152,7 @@ def init_training(vn):
         sql="select a.key, a.user_id, au.name, au.email, * from accounts_account aa join  public.accounts_user au on aa.id = au.account_id join public.authtoken_token a on au.id = a.user_id where aa.id = 88557;"
     )
 
+    vn.train(
+        question="cuantas cuentas de liverpool tenemos registradas",
+        sql="SELECT COUNT(*) FROM public.accounts_account WHERE 'name' LIKE '%Liverpool%' AND status = 'active';"
+    )
