@@ -228,3 +228,88 @@ CREATE INDEX accounts_user_account_id_a92d74d0_idx ON public.accounts_user USING
 CREATE INDEX accounts_user_account_id_d716253e_idx ON public.accounts_user USING btree (account_id, is_driver);
 CREATE INDEX accounts_user_email_70e5d3371c73dba5_like ON public.accounts_user USING btree (email varchar_pattern_ops);
 """
+
+ddl_plans = """
+CREATE TABLE public.routes_plan (
+	created timestamptz NOT NULL,
+	modified timestamptz NOT NULL,
+	id uuid NOT NULL,
+	"name" varchar(254) NOT NULL,
+	account_id int4 NOT NULL,
+	end_date date NOT NULL,
+	start_date date NOT NULL,
+	is_cluster bool NOT NULL,
+	reset_day int2 NOT NULL,
+	fleet_id int4 NULL,
+	end_time time NULL,
+	start_time time NULL,
+	status varchar(32) NOT NULL,
+	CONSTRAINT routes_plan_account_id_9f1d9131_uniq UNIQUE (account_id, name),
+	CONSTRAINT routes_plan_pkey PRIMARY KEY (id),
+	CONSTRAINT routes_plan_reset_day_check CHECK ((reset_day >= 0))
+);
+CREATE INDEX routes_plan_3b4c8329 ON public.routes_plan USING btree (fleet_id);
+CREATE INDEX routes_plan_8a089c2a ON public.routes_plan USING btree (account_id);
+CREATE INDEX routes_plan_account_id_41852db3_idx ON public.routes_plan USING btree (account_id, start_date, end_date);
+CREATE INDEX routes_plan_start_date_014043ef_idx ON public.routes_plan USING btree (start_date, end_date);
+CREATE INDEX routes_plan_start_date_9549707f_idx ON public.routes_plan USING btree (start_date);
+
+
+-- public.routes_plan foreign keys
+
+ALTER TABLE public.routes_plan ADD CONSTRAINT routes_plan_account_id_66657536_fk_accounts_account_id FOREIGN KEY (account_id) REFERENCES public.accounts_account(id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE public.routes_plan ADD CONSTRAINT routes_plan_fleet_id_549dbfa3_fk_fleets_fleets_id FOREIGN KEY (fleet_id) REFERENCES public.fleets_fleets(id) DEFERRABLE INITIALLY DEFERRED;
+"""
+
+ddl_vehicles = """
+CREATE TABLE public.routes_vehicle (
+	id int4 DEFAULT nextval('accounts_vehicle_id_seq'::regclass) NOT NULL,
+	"name" varchar(254) NOT NULL,
+	capacity float8 NOT NULL,
+	created timestamptz NOT NULL,
+	modified timestamptz NOT NULL,
+	account_id int4 NOT NULL,
+	default_driver_id int4 NULL,
+	location_end_address varchar(508) NOT NULL,
+	location_end_latitude numeric(9, 6) NULL,
+	location_end_longitude numeric(9, 6) NULL,
+	location_start_address varchar(508) NOT NULL,
+	location_start_latitude numeric(9, 6) NULL,
+	location_start_longitude numeric(9, 6) NULL,
+	shift_end time NULL,
+	shift_start time NULL,
+	capacity_2 float8 NULL,
+	capacity_3 float8 NULL,
+	reference_id varchar(254) NULL,
+	"cost" float8 NULL,
+	max_visit int4 NULL,
+	min_load int2 NOT NULL,
+	min_load_2 int2 NOT NULL,
+	min_load_3 int2 NOT NULL,
+	rest_time_duration int4 NULL,
+	rest_time_end time NULL,
+	rest_time_start time NULL,
+	max_time int4 NULL,
+	deleted bool NULL,
+	status varchar(100) NOT NULL,
+	status_changed timestamptz NOT NULL,
+	license_plate varchar(12) NULL,
+	CONSTRAINT accounts_vehicle_pkey PRIMARY KEY (id),
+	CONSTRAINT routes_vehicle_account_id_30e966ad_uniq UNIQUE (account_id, name),
+	CONSTRAINT routes_vehicle_max_time_check CHECK ((max_time >= 0)),
+	CONSTRAINT routes_vehicle_max_visit_check CHECK ((max_visit >= 0)),
+	CONSTRAINT routes_vehicle_min_load_2_check CHECK ((min_load_2 >= 0)),
+	CONSTRAINT routes_vehicle_min_load_3_check CHECK ((min_load_3 >= 0)),
+	CONSTRAINT routes_vehicle_min_load_check CHECK ((min_load >= 0))
+);
+CREATE INDEX accounts_vehicle_8a089c2a ON public.routes_vehicle USING btree (account_id);
+
+
+-- public.routes_vehicle foreign keys
+
+ALTER TABLE public.routes_vehicle ADD CONSTRAINT accounts_vehicle_account_id_f551dba1_fk_accounts_account_id FOREIGN KEY (account_id) REFERENCES public.accounts_account(id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE public.routes_vehicle ADD CONSTRAINT routes_vehicle_default_driver_id_6b320733_fk_accounts_user_id FOREIGN KEY (default_driver_id) REFERENCES public.accounts_user(id) DEFERRABLE INITIALLY DEFERRED;
+"""
+
+
+ddls_database = [ddl_routes, ddl_visits, ddl_account, ddl_account_user, ddl_plans, ddl_vehicles]
